@@ -1,0 +1,402 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.avego.common.util</groupId>
+	<artifactId>spring-security-oauth2-migrator</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
+	<properties>
+
+		<!-- pre migration versions -->
+		<old.org.springframework.version>3.1.1.RELEASE</old.org.springframework.version>
+		<old.org.spring.security.version>3.1.0.RELEASE</old.org.spring.security.version>
+		<old.org.spring.security.oauth.version>1.0.0.M6d</old.org.spring.security.oauth.version>
+
+		<!-- new versions -->
+		<org.springframework.version>3.1.4.RELEASE</org.springframework.version>
+		<org.spring.security.version>3.1.3.RELEASE</org.spring.security.version>
+		<org.spring.security.oauth.version>1.0.5.RELEASE</org.spring.security.oauth.version>
+
+		<log4j.version>1.2.13</log4j.version>
+		<mysql-connector-java.version>5.1.21</mysql-connector-java.version>
+		<ojdbc6.version>11.2.0.3.0</ojdbc6.version>
+		<commons-lang3.version>3.0</commons-lang3.version>
+		<xbean-classloader.version>3.13</xbean-classloader.version>
+
+	</properties>
+	<dependencies>
+
+		<dependency>
+			<groupId>org.apache.xbean</groupId>
+			<artifactId>xbean-classloader</artifactId>
+			<version>${xbean-classloader.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>${commons-lang3.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>${mysql-connector-java.version}</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc6</artifactId>
+			<version>${ojdbc6.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>${org.springframework.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>${org.spring.security.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+			<version>${org.spring.security.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.security.oauth</groupId>
+			<artifactId>spring-security-oauth2</artifactId>
+			<version>${org.spring.security.oauth.version}</version>
+		</dependency>
+
+		<!-- Testing Dependencies -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.7</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>1.9.0</version>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>1.3.2</version>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
+	<build>
+		<plugins>
+
+			<plugin>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration></configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.2.1</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.7</version>
+				<executions>
+
+					<!-- Jars for new spring sec deserialisation included on the classpath -->
+					<execution>
+						<id>copynewjars</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+
+
+								<artifactItem>
+									<groupId>org.apache.xbean</groupId>
+									<artifactId>xbean-classloader</artifactId>
+									<version>${xbean-classloader.version}</version>
+									<outputDirectory>${project.build.directory}/newlib</outputDirectory>
+								</artifactItem>
+
+								<artifactItem>
+									<groupId>org.apache.commons</groupId>
+									<artifactId>commons-lang3</artifactId>
+									<version>${commons-lang3.version}</version>
+									<outputDirectory>${project.build.directory}/newlib</outputDirectory>
+								</artifactItem>
+
+								<artifactItem>
+									<groupId>mysql</groupId>
+									<artifactId>mysql-connector-java</artifactId>
+									<version>${mysql-connector-java.version}</version>
+									<outputDirectory>${project.build.directory}/newlib</outputDirectory>
+								</artifactItem>
+								
+								<artifactItem>
+									<groupId>com.oracle</groupId>
+									<artifactId>ojdbc6</artifactId>
+									<version>${ojdbc6.version}</version>
+									<outputDirectory>${project.build.directory}/newlib</outputDirectory>
+								</artifactItem>
+
+								<artifactItem>
+									<groupId>commons-logging</groupId>
+									<artifactId>commons-logging</artifactId>
+									<version>1.1.1</version>
+									<outputDirectory>${project.build.directory}/newlib</outputDirectory>
+								</artifactItem>
+
+								<artifactItem>
+									<groupId>org.springframework</groupId>
+									<artifactId>spring-core</artifactId>
+									<version>${org.springframework.version}</version>
+									<outputDirectory>${project.build.directory}/newlib</outputDirectory>
+								</artifactItem>
+
+								<artifactItem>
+									<groupId>org.springframework</groupId>
+									<artifactId>spring-beans</artifactId>
+									<version>${org.springframework.version}</version>
+									<outputDirectory>${project.build.directory}/newlib</outputDirectory>
+								</artifactItem>
+
+								<artifactItem>
+									<groupId>org.springframework</groupId>
+									<artifactId>spring-tx</artifactId>
+									<version>${org.springframework.version}</version>
+									<outputDirectory>${project.build.directory}/newlib</outputDirectory>
+								</artifactItem>
+
+								<artifactItem>
+									<groupId>org.springframework</groupId>
+									<artifactId>spring-jdbc</artifactId>
+									<version>${org.springframework.version}</version>
+									<outputDirectory>${project.build.directory}/newlib</outputDirectory>
+								</artifactItem>
+
+								<artifactItem>
+									<groupId>org.springframework.security</groupId>
+									<artifactId>spring-security-core</artifactId>
+									<version>${org.spring.security.version}</version>
+									<outputDirectory>${project.build.directory}/newlib</outputDirectory>
+								</artifactItem>
+
+								<artifactItem>
+									<groupId>org.springframework.security</groupId>
+									<artifactId>spring-security-web</artifactId>
+									<version>${org.spring.security.version}</version>
+									<outputDirectory>${project.build.directory}/newlib</outputDirectory>
+								</artifactItem>
+
+								<artifactItem>
+									<groupId>org.springframework.security.oauth</groupId>
+									<artifactId>spring-security-oauth2</artifactId>
+									<version>${org.spring.security.oauth.version}</version>
+									<outputDirectory>${project.build.directory}/newlib</outputDirectory>
+								</artifactItem>
+
+							</artifactItems>
+						</configuration>
+					</execution>
+
+					<!-- Jars for old spring sec deserialisation, loaded in separate class 
+						loader -->
+					<execution>
+						<id>copyoldjars</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>org.springframework.security</groupId>
+									<artifactId>spring-security-core</artifactId>
+									<version>${old.org.spring.security.version}</version>
+									<outputDirectory>${project.build.directory}/oldlib</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.springframework.security</groupId>
+									<artifactId>spring-security-web</artifactId>
+									<version>${old.org.spring.security.version}</version>
+									<outputDirectory>${project.build.directory}/oldlib</outputDirectory>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.springframework.security.oauth</groupId>
+									<artifactId>spring-security-oauth2</artifactId>
+									<version>${old.org.spring.security.oauth.version}</version>
+									<outputDirectory>${project.build.directory}/oldlib</outputDirectory>
+								</artifactItem>
+
+								<artifactItem>
+									<groupId>log4j</groupId>
+									<artifactId>log4j</artifactId>
+									<version>${log4j.version}</version>
+									<outputDirectory>${project.build.directory}/oldlib</outputDirectory>
+								</artifactItem>
+								
+								
+								<!-- NOTE if you want to run via maven Add any of your own dependencies needed here for deserialisation 
+									e.g. for your own principal/user details, otherwise add the jar containing your
+									principal class to the oldlib dir -->
+								
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- This packages the uber jar and oldlib dir into a tgz that can be 
+				extracted and used to run the migration -->
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<!-- This creates the tgz file -->
+					<execution>
+						<id>build-tarball</id>
+						<phase>package</phase>
+						<configuration>
+							<target>
+								<taskdef classpathref="maven.plugin.classpath"
+									resource="net/sf/antcontrib/antcontrib.properties" />
+								<!-- Create tar -->
+								<tar destfile="target/${project.artifactId}-${project.version}.tar">
+									<tarfileset dir="${project.build.directory}/oldlib"
+										includes="**/*" prefix="oldlib" />
+									<tarfileset dir="${project.build.directory}/newlib"
+										includes="**/*" prefix="newlib" />
+									<tarfileset dir="${project.build.directory}"
+										includes="${project.artifactId}-${project.version}.jar" />
+									<tarfileset dir="${project.build.directory}/classes"
+										includes="README.txt" />
+								</tar>
+								<!-- Create tar.gz -->
+								<gzip destfile="target/${project.artifactId}-${project.version}.tgz"
+									src="target/${project.artifactId}-${project.version}.tar" />
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Attach the zip artifacts to this install/deploy -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<id>attach-artifacts</id>
+						<phase>package</phase>
+						<goals>
+							<goal>attach-artifact</goal>
+						</goals>
+						<configuration>
+							<artifacts>
+								<artifact>
+									<file>target/${project.artifactId}-${project.version}.tgz</file>
+									<type>tgz</type>
+								</artifact>
+							</artifacts>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<configuration>
+					<scmCommentPrefix>CORE-000 ${project.version} release</scmCommentPrefix>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>versions-maven-plugin</artifactId>
+				<configuration>
+					<includeProperties>commonweb.version</includeProperties>
+				</configuration>
+			</plugin>
+
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.apache.maven.plugins
+										</groupId>
+										<artifactId>
+											maven-dependency-plugin
+										</artifactId>
+										<versionRange>
+											[1.7,)
+										</versionRange>
+										<goals>
+											<goal>copy</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<scm>
+		<connection>scm:svn:svn://vcs.avego.com/Common/util/oauth-token-migration/trunk</connection>
+	</scm>
+
+</project>
