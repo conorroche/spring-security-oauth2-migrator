@@ -342,21 +342,6 @@
 				</executions>
 			</plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-release-plugin</artifactId>
-				<configuration>
-					<scmCommentPrefix>CORE-000 ${project.version} release</scmCommentPrefix>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>versions-maven-plugin</artifactId>
-				<configuration>
-					<includeProperties>commonweb.version</includeProperties>
-				</configuration>
-			</plugin>
-
 		</plugins>
 		<pluginManagement>
 			<plugins>
@@ -394,9 +379,5 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-
-	<scm>
-		<connection>scm:svn:svn://vcs.avego.com/Common/util/oauth-token-migration/trunk</connection>
-	</scm>
 
 </project>
