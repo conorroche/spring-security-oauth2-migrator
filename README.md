@@ -8,13 +8,18 @@ spring-security-oauth2-migrator
 This is a tool that migrates spring security oauth2 data stored in a JDBC store between pre 1.0 versions of spring security oauth2 
 such as 1.0.0.M6d and newer version like 1.0.5.RELEASE
 
+At Avego http://www.avego.com we used this tool to migrate access and refresh token data when upgrading spring security ouath2.
+
 The tool supports MySql and Oracle but can be extended easily for other databases.
+
 If building the tool using Maven you must first make the Oracle ODJBC 6 jar available either in your own hosted mvn repository
 or install it into your local m2 repository. To install it into your local repo:
 
 mvn install:install-file -Dfile={ORACLE_HOME}/jdbc/lib/ojdbc6.jar -Dpackaging=jar\
  -DgroupId=com.oracle -DartifactId=ojdbc6 -Dversion=11.2.0.3.0
 where {ORACLE_HOME} is the path to the Oracle Database installation.
+
+Alternatively you can delete the com.oracle dependency and artifaction item references from the pom.xml file and remove the OracleOauthMigrationDao class.
 
 
 ===============================
